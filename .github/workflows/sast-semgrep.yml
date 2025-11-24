@@ -1,0 +1,23 @@
+name: SAST - Semgrep
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install semgrep
+        run: pip install semgrep
+      - name: Run semgrep (OWASP rules)
+        run: |
+          mkdir -p reports
+          semgrep --config=p/owasp --json --output=reports/semgrep.json app || true
+      - name: Upload semgrep report
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-report
+          path: reports/semgrep.json

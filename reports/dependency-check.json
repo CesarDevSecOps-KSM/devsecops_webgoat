@@ -1,0 +1,5 @@
+{
+  "dependencies": [
+    {"fileName":"example.jar","vulnerabilities":[{"name":"CVE-2020-0001","severity":"HIGH"}]}
+  ]
+}

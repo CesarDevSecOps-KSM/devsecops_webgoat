@@ -1,0 +1,5 @@
+{
+  "results": [
+    {"check_id":"java.sql.injection","path":"app/src/main/java/org/owasp/webgoat/Example.java","start":{"line":123},"extra":{"message":"Potential SQL injection"}}
+  ]
+}

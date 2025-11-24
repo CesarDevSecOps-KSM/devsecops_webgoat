@@ -1,0 +1,32 @@
+name: Container Build & Scan (Trivy)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull WebGoat Docker image
+        run: |
+          IMAGE=securetasks/webgoat:pr-${{ github.run_number }}
+          docker pull webgoat/webgoat-8.0
+          docker tag webgoat/webgoat-8.0 $IMAGE
+      - name: Install Trivy
+        run: |
+          sudo apt-get update && sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_$(uname -m)-linux.tar.gz -O trivy.tar.gz
+          tar zxvf trivy.tar.gz trivy && sudo mv trivy /usr/local/bin/
+      - name: Run Trivy image scan
+        run: |
+          IMAGE=securetasks/webgoat:pr-${{ github.run_number }}
+          mkdir -p reports
+          trivy image --format json -o reports/trivy-image.json $IMAGE || true
+      - name: Upload Trivy report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-image
+          path: reports/trivy-image.json
